@@ -1,12 +1,6 @@
-# Aztec Wallet UI boilerplate
+# Aztec Wallet Wheez(i)
 
-This repo contains boilerplate configuration to get the PXE running in a browser.
-
-It has been tested with version 0.48.0.
-
-## Getting started
-
-Make sure you have the sandbox installed. You can find install instructions [here](https://docs.aztec.network/guides/developer_guides/getting_started/quickstart).
+<img src="https://github.com/hpmaxi/awwi/blob/98780ef7ac4fcb1e50a85bab0de04cacd14ecea2/assets/wheezi.webp" alt="aztec wallet wheez(i) logo" width="30%">
 
 ```bash
 aztec start --sandbox
@@ -15,13 +9,7 @@ aztec start --sandbox
 Then:
 
 ```bash
-cd my-vite-app
+cd awwi
 yarn
 yarn dev
 ```
-
-## Additional Resources
-
-Wallet connect docs
-
-- https://docs.shieldswap.org/modal
