@@ -1,16 +1,4 @@
-import {
-  // AccountWallet,
-  // CompleteAddress,
-  // ContractDeployer,
-  // createDebugLogger,
-  // Fr,
-  // PXE,
-  waitForPXE,
-  // TxStatus,
-  createPXEClient,
-  // getContractInstanceFromDeployParams,
-  // DebugLogger,
-} from "@aztec/aztec.js";
+import { waitForPXE, createPXEClient } from "@aztec/aztec.js";
 import { PXE_URL } from "./../constants";
 
 export const setupSandbox = async () => {
@@ -20,13 +8,3 @@ export const setupSandbox = async () => {
 };
 
 export default setupSandbox;
-// try {
-//   console.log(process.env);
-//   let pxe = await setupSandbox();
-//   let accounts = await pxe.getRegisteredAccounts();
-//   console.log(accounts);
-//   //let number = await pxe.getBlockNumber()
-//   console.log(await pxe.getBlockNumber());
-// } catch (e) {
-//   console.log(e);
-// }
