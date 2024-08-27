@@ -3,6 +3,7 @@
 <img src="https://github.com/hpmaxi/awwi/blob/98780ef7ac4fcb1e50a85bab0de04cacd14ecea2/assets/wheezi.webp" alt="aztec wallet wheez(i) logo" width="30%">
 
 ```bash
+VERSION=0.48.0 aztec-up
 aztec start --sandbox
 ```
 

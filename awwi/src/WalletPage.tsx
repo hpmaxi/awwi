@@ -3,20 +3,22 @@ import { setupSandbox } from "./aztec/instantiatePXE";
 import { createAccount } from "./aztec/createAccount";
 import { PXE } from "@aztec/aztec.js";
 import { deployAccount } from "./aztec/deployAccount";
+import { logAccount } from "./aztec/logAccount";
 
 export const WalletPage = () => {
   const [showContainer] = useState(false);
   const [pxe, setPXE] = useState<PXE | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingSandbox, setIsLoadingSandbox] = useState(true);
+  const [isCreatingWallet, setIsCreatingWallet] = useState(false);
 
   useEffect(() => {
     setupSandbox().then((pxe) => {
-      setIsLoading(false);
+      setIsLoadingSandbox(false);
       setPXE(pxe);
     });
   }, []);
 
-  return isLoading ? (
+  return isLoadingSandbox ? (
     <div className="mb-4">
       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
       doing setup sandbox...
@@ -24,11 +26,12 @@ export const WalletPage = () => {
   ) : (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
       <button
-        disabled={!pxe}
+        disabled={!pxe || isCreatingWallet}
         onClick={async () => {
           if (!pxe) {
             return;
           }
+          setIsCreatingWallet(true);
 
           const account = await createAccount(pxe, undefined, undefined);
           console.log({ account });
@@ -39,14 +42,18 @@ export const WalletPage = () => {
           let txReceipt;
           try {
             txReceipt = await deployAccount(account);
+            console.log({ txReceipt });
+
+            await logAccount(account);
+
+            setIsCreatingWallet(false);
           } catch (e) {
             console.error("error deploying account", e);
           }
-          console.log({ txReceipt });
         }}
         className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition"
       >
-        Create Wallet
+        {isCreatingWallet ? "Creating Wallet" : "Create Wallet"}
       </button>
 
       {showContainer && (

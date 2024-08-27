@@ -1,16 +1,16 @@
 import React, { Suspense, lazy } from "react";
 import { LoadingSpinner } from "./LoadingSpinner";
 
-const Container = lazy(() => {
+const WalletPage = lazy(() => {
   return new Promise((resolve) => {
-    resolve(import("./Container") as any);
+    resolve(import("./WalletPage") as any);
   });
 });
 
 export const App = () => {
   return (
     <Suspense fallback={<LoadingSpinner />}>
-      <Container />
+      <WalletPage />
     </Suspense>
   );
 };
