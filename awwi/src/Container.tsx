@@ -38,7 +38,7 @@ export const WalletPage = () => {
 
           let txReceipt;
           try {
-            await deployAccount(account);
+            txReceipt = await deployAccount(account);
           } catch (e) {
             console.error("error deploying account", e);
           }
