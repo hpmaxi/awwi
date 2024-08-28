@@ -14,3 +14,9 @@ cd awwi
 yarn
 yarn dev
 ```
+
+## Known problems
+
+- Adding wagmi dependency conflicts with nodePolyfills, and requires a clean install (removing `node_modules`) to make it work again.
+- Using rivet, if the wallet is connected, never finishes of doing `setupSandbox`
+- -32601 `method not found` on creating/deploying accounts. As above, if rivet is connected, the rpc messages are sent to anvil instead to pxe. This doesn't happen with rivet!
