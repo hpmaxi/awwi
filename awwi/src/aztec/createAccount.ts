@@ -25,7 +25,5 @@ export async function createAccount(
     salt
   );
 
-  console.log({ account });
-
   return account;
 }
