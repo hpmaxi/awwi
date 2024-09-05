@@ -28,6 +28,7 @@ export const WalletPage: React.FC = () => {
   const { data: registeredAccounts = [], refetch: updatePXEState } = useQuery({
     queryKey: ["pxe-accounts"],
     queryFn: () => pxe?.getRegisteredAccounts(),
+    enabled: pxe !== undefined,
   });
 
   const isDisabledCreateAztecWallet = !pxe || isCreatingWallet;
