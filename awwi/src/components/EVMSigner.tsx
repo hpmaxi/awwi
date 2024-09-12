@@ -19,6 +19,7 @@ export const EVMSigner: React.FC<Props> = ({ onSecretGenerated }) => {
 
   const isDisabledSignMessage =
     !evmAccount || !evmWalletClient || isLoadingSignMessage || !messageToSign.trim()
+
   const isDisabledConnect = error !== null || isLoadingConnect
 
   const handleConnect = useCallback(async () => {
@@ -81,7 +82,7 @@ export const EVMSigner: React.FC<Props> = ({ onSecretGenerated }) => {
             differents accounts.
           </Text>
           <Input
-            isDisabled={isDisabledSignMessage}
+            isDisabled={!evmAccount || !evmWalletClient}
             onChange={(e) => setMessageToSign(e.target.value)}
             placeholder="Enter message to sign"
             type="text"
