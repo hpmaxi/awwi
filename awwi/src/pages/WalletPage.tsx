@@ -98,6 +98,7 @@ export const WalletPage: React.FC = () => {
   return (
     <>
       <Modal
+        isCentered
         isOpen={isDisabledCreateAztecWallet}
         onClose={() => {
           return
