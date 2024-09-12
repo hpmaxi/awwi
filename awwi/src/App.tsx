@@ -18,7 +18,7 @@ const client = new QueryClient()
 export const App = () => {
   return (
     <QueryClientProvider client={client}>
-      <Center>
+      <Center bgColor="#fcfbfc">
         <Suspense
           fallback={
             <Center flexDirection="column" rowGap={4}>

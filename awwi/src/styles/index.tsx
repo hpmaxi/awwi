@@ -22,6 +22,9 @@ export const theme = extendTheme({
       ':root': {
         '--color-primary': '#8c7eff',
       },
+      a: {
+        color: 'var(--color-primary)',
+      },
     },
   },
   components: {

@@ -9,6 +9,23 @@ import { LoadingSandbox } from '../components/LoadingSandbox'
 import { useQuery } from '@tanstack/react-query'
 import { AztecAccountsList } from '../components/AztecAccountsList'
 import { EVMSigner } from '../components/EVMSigner'
+import {
+  Button,
+  Card,
+  CardBody,
+  Center,
+  Code,
+  Flex,
+  Heading,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalOverlay,
+  Spinner,
+  Text,
+  VStack,
+} from '@chakra-ui/react'
+import { AddIcon } from '@chakra-ui/icons'
 
 export const WalletPage: React.FC = () => {
   const [isCreatingWallet, setIsCreatingWallet] = useState(false)
@@ -23,9 +40,9 @@ export const WalletPage: React.FC = () => {
   })
 
   const { data: registeredAccounts = [], refetch: updatePXEState } = useQuery({
-    queryKey: ['pxe-accounts'],
-    queryFn: () => pxe?.getRegisteredAccounts(),
     enabled: pxe !== undefined,
+    queryFn: () => pxe?.getRegisteredAccounts(),
+    queryKey: ['pxe-accounts'],
   })
 
   const isDisabledCreateAztecWallet = !pxe || isCreatingWallet
@@ -79,37 +96,64 @@ export const WalletPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
-      <EVMSigner onSecretGenerated={handleSecretGenerated} />
-
-      {secret === null && (
-        <p className="text-gray-600 mt-4">Using random secret for Aztec account generation</p>
-      )}
-
-      <button
-        disabled={isDisabledCreateAztecWallet}
-        onClick={handleCreateWallet}
-        className={`btn ${isDisabledCreateAztecWallet ? 'btnDisabled' : 'btnEnabled'} mt-4`}
-      >
-        {isCreatingWallet ? 'Creating Wallet...' : 'Create Aztec Wallet'}
-      </button>
-
-      {selectedAccount && (
-        <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6 mt-4">
-          <h2 className="text-xl font-bold mb-4">Account Details</h2>
-          <p className="text-gray-600 break-all">{selectedAccount.toString()}</p>
-        </div>
-      )}
-
-      <AztecAccountsList
-        accounts={registeredAccounts}
-        onSelect={(selectedAccount) => {
-          console.log('Account selected', selectedAccount.toString())
-          setSelectedAccount(selectedAccount)
+    <>
+      <Modal
+        isOpen={isDisabledCreateAztecWallet}
+        onClose={() => {
+          return
         }}
-        selected={selectedAccount}
-      />
-    </div>
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalBody p={8}>
+            <Center flexDirection="column" rowGap={4}>
+              <Spinner label="Loading PXE Assets..." />
+              <Text fontSize="md">
+                {secret === null
+                  ? `Using random secret for Aztec account generation...`
+                  : `Using unique secret based on connected account...`}
+              </Text>
+            </Center>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      <VStack spacing={4} align={'flex-start'}>
+        <Heading size="md">Aztec Wallet Wheez(i)</Heading>
+        <Card maxWidth={'calc(100vw - 16px)'} width={'600px'}>
+          <CardBody rowGap={'16px'} display="flex" flexDirection="column">
+            <Flex columnGap={3}>
+              <AztecAccountsList
+                accounts={registeredAccounts}
+                onSelect={(selectedAccount) => {
+                  setSelectedAccount(selectedAccount)
+                }}
+                selected={selectedAccount}
+              />
+              <Button
+                isDisabled={isDisabledCreateAztecWallet}
+                onClick={handleCreateWallet}
+                title="Add account"
+              >
+                <AddIcon />
+              </Button>
+            </Flex>
+            {selectedAccount && (
+              <>
+                <Heading size="sm">Account Details</Heading>
+                <Code p={4} borderRadius={6}>
+                  {selectedAccount.toString()}
+                </Code>
+              </>
+            )}
+          </CardBody>
+        </Card>
+        <Card maxWidth={'calc(100vw - 16px)'} width={'600px'}>
+          <CardBody rowGap={'16px'} display="flex" flexDirection="column">
+            <EVMSigner onSecretGenerated={handleSecretGenerated} />
+          </CardBody>
+        </Card>
+      </VStack>
+    </>
   )
 }
 
