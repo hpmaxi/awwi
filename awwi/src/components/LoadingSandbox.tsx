@@ -1,5 +1,5 @@
-import React from "react";
-import { LoadingSpinner } from "../LoadingSpinner";
+import React from 'react'
+import { LoadingSpinner } from './LoadingSpinner'
 
 export const LoadingSandbox = () => {
   return (
@@ -9,5 +9,5 @@ export const LoadingSandbox = () => {
         <p>This may take a few moments. Please wait.</p>
       </>
     </LoadingSpinner>
-  );
-};
+  )
+}

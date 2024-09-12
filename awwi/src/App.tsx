@@ -1,12 +1,12 @@
-import React, { Suspense, lazy } from "react";
-import { LoadingSpinner } from "./LoadingSpinner";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import React, { Suspense, lazy } from 'react'
+import { LoadingSpinner } from './components/LoadingSpinner'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const WalletPageLazy = lazy(() => {
-  return new Promise((resolve) => resolve(import("./WalletPage") as any));
-});
+  return new Promise((resolve) => resolve(import('./pages/WalletPage') as any))
+})
 
-const client = new QueryClient();
+const client = new QueryClient()
 
 export const App = () => {
   return (
@@ -21,5 +21,5 @@ export const App = () => {
         <WalletPageLazy />
       </Suspense>
     </QueryClientProvider>
-  );
-};
+  )
+}
