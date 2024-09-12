@@ -1,13 +1,12 @@
-import React from "react";
-import { LoadingSpinner } from "../LoadingSpinner";
+import React from 'react'
+import { Center, Spinner, Text, Heading } from '@chakra-ui/react'
 
 export const LoadingSandbox = () => {
   return (
-    <LoadingSpinner>
-      <>
-        <h1>Setting up your sandbox...</h1>
-        <p>This may take a few moments. Please wait.</p>
-      </>
-    </LoadingSpinner>
-  );
-};
+    <Center flexDirection="column" rowGap={4}>
+      <Spinner label="Setting up your sandbox..." />
+      <Heading size="md">Setting up your sandbox...</Heading>
+      <Text fontSize="md">This may take a few moments. Please wait.</Text>
+    </Center>
+  )
+}

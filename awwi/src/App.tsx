@@ -1,25 +1,36 @@
-import React, { Suspense, lazy } from "react";
-import { LoadingSpinner } from "./LoadingSpinner";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import React, { Suspense, lazy } from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Center as BaseCenter, chakra, Spinner, Text } from '@chakra-ui/react'
+
+const Center = chakra(BaseCenter, {
+  baseStyle: {
+    minHeight: '100vh',
+    overflowX: 'hidden',
+    width: '100%',
+  },
+})
 
 const WalletPageLazy = lazy(() => {
-  return new Promise((resolve) => resolve(import("./WalletPage") as any));
-});
+  return new Promise((resolve) => resolve(import('./pages/WalletPage') as any))
+})
 
-const client = new QueryClient();
+const client = new QueryClient()
 
 export const App = () => {
   return (
     <QueryClientProvider client={client}>
-      <Suspense
-        fallback={
-          <LoadingSpinner>
-            <h1>Loading PXE Assets...</h1>
-          </LoadingSpinner>
-        }
-      >
-        <WalletPageLazy />
-      </Suspense>
+      <Center bgColor="#fcfbfc">
+        <Suspense
+          fallback={
+            <Center flexDirection="column" rowGap={4}>
+              <Spinner label="Loading PXE Assets..." />
+              <Text fontSize="md">Loading PXE Assets...</Text>
+            </Center>
+          }
+        >
+          <WalletPageLazy />
+        </Suspense>
+      </Center>
     </QueryClientProvider>
-  );
-};
+  )
+}
