@@ -5,7 +5,8 @@ import { Center as BaseCenter, chakra, Spinner, Text } from '@chakra-ui/react'
 const Center = chakra(BaseCenter, {
   baseStyle: {
     minHeight: '100vh',
-    width: '100vw',
+    overflowX: 'hidden',
+    width: '100%',
   },
 })
 
