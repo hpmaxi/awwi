@@ -15,6 +15,7 @@ export const EVMSigner: React.FC<Props> = ({ onSecretGenerated }) => {
   const [error, setError] = useState<Error | null>(null)
   const [isLoadingConnect, setIsLoadingConnect] = useState(false)
   const [isLoadingSignMessage, setIsLoadingSignMessage] = useState(false)
+  const [alreadySigned, setAlreadySigned] = useState(false)
   const [messageToSign, setMessageToSign] = useState('')
 
   const isDisabledSignMessage =
@@ -41,6 +42,7 @@ export const EVMSigner: React.FC<Props> = ({ onSecretGenerated }) => {
 
   const handleSignMessage = useCallback(async () => {
     if (!evmWalletClient || !evmAccount || !messageToSign.trim()) return
+
     setIsLoadingSignMessage(true)
     setError(null)
 
@@ -56,6 +58,7 @@ export const EVMSigner: React.FC<Props> = ({ onSecretGenerated }) => {
       setError('ERROR_SIGNING')
     } finally {
       setIsLoadingSignMessage(false)
+      setAlreadySigned(true)
     }
   }, [evmWalletClient, evmAccount, messageToSign, onSecretGenerated])
 
@@ -84,27 +87,46 @@ export const EVMSigner: React.FC<Props> = ({ onSecretGenerated }) => {
       {evmWalletClient && (
         <>
           <Heading size="xs" as="h3">
-            Connected to account {evmAccount}
+            Connected to {evmAccount}
           </Heading>
-          <Text fontSize="sm">
-            Enter a message to sign. Signing different messages produces unique secrets for
-            differents accounts.
-          </Text>
-          <Input
-            isDisabled={!evmAccount || !evmWalletClient}
-            onChange={(e) => setMessageToSign(e.target.value)}
-            placeholder="Enter message to sign"
-            type="text"
-            value={messageToSign}
-          />
-          <Button
-            colorScheme="teal"
-            isDisabled={isDisabledSignMessage}
-            onClick={handleSignMessage}
-            width="100%"
-          >
-            {isLoadingSignMessage ? 'Signing...' : 'Sign Message'}
-          </Button>
+          {alreadySigned ? (
+            <Text fontSize="sm">
+              Message signed!{' '}
+              <Button
+                variant="link"
+                colorScheme="teal"
+                onClick={() => {
+                  setAlreadySigned(false)
+                  setMessageToSign('')
+                }}
+              >
+                Sign again?
+              </Button>
+            </Text>
+          ) : (
+            <>
+              <Text fontSize="sm">
+                Enter a message to sign. Signing different messages produces unique secrets for
+                differents accounts.
+              </Text>
+              <Input
+                isDisabled={!evmAccount || !evmWalletClient}
+                onChange={(e) => setMessageToSign(e.target.value)}
+                placeholder="Enter message to sign"
+                type="text"
+                value={messageToSign}
+              />
+              <Button
+                colorScheme="teal"
+                isDisabled={isDisabledSignMessage}
+                onClick={handleSignMessage}
+                variant="outline"
+                width="100%"
+              >
+                {isLoadingSignMessage ? 'Signing...' : 'Sign Message'}
+              </Button>
+            </>
+          )}
         </>
       )}
       {error && (
