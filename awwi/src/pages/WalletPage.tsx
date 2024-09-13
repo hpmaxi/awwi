@@ -23,15 +23,23 @@ import {
   ModalOverlay,
   Spinner,
   Text,
+  StackDivider,
   VStack,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
 } from '@chakra-ui/react'
-import { AddIcon } from '@chakra-ui/icons'
+import { AddIcon, ViewIcon } from '@chakra-ui/icons'
 
 export const WalletPage: React.FC = () => {
   const [isCreatingWallet, setIsCreatingWallet] = useState(false)
   const [secret, setSecret] = useState<string | null>(null)
   const [account, setAccount] = useState<AccountManager | null>(null)
   const [selectedAccount, setSelectedAccount] = useState<CompleteAddress | undefined>(undefined)
+  const [viewDetails, setViewDetails] = useState(false)
+  const [addAccount, setAddAccount] = useState(false)
 
   // useSuspenseQuery
   const { data: pxe, isLoading: isLoadingSandbox } = useQuery({
@@ -62,7 +70,6 @@ export const WalletPage: React.FC = () => {
 
   const handleSecretGenerated = useCallback((generatedSecret: string) => {
     setSecret(generatedSecret)
-    console.log('Generated secret:', generatedSecret)
   }, [])
 
   const handleCreateWallet = useCallback(async () => {
@@ -75,9 +82,9 @@ export const WalletPage: React.FC = () => {
     try {
       const newAccount = await createAccount(pxe, randomness, undefined)
       setAccount(newAccount)
-      //console.log({ account: newAccount });
 
       const { isDeployed } = await checkAccountStatus()
+
       if (!isDeployed) {
         const txReceipt = await deployAccount(newAccount)
         console.log({ txReceipt })
@@ -88,6 +95,7 @@ export const WalletPage: React.FC = () => {
     } finally {
       setIsCreatingWallet(false)
       updatePXEState()
+      setAddAccount(false)
     }
   }, [pxe, secret, checkAccountStatus])
 
@@ -97,27 +105,6 @@ export const WalletPage: React.FC = () => {
 
   return (
     <>
-      <Modal
-        isCentered
-        isOpen={isDisabledCreateAztecWallet}
-        onClose={() => {
-          return
-        }}
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalBody p={8}>
-            <Center flexDirection="column" rowGap={4}>
-              <Spinner label="Loading PXE Assets..." />
-              <Text fontSize="md">
-                {secret === null
-                  ? `Using random secret for Aztec account generation...`
-                  : `Using unique secret based on connected account...`}
-              </Text>
-            </Center>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
       <VStack spacing={4} align={'flex-start'}>
         <Heading size="md">Aztec Wallet Wheez(i)</Heading>
         <Card maxWidth={'calc(100vw - 16px)'} width={'600px'}>
@@ -131,29 +118,91 @@ export const WalletPage: React.FC = () => {
                 selected={selectedAccount}
               />
               <Button
+                isDisabled={isDisabledCreateAztecWallet || !selectedAccount}
+                onClick={() => setViewDetails(true)}
+                title="View account details"
+              >
+                <ViewIcon />
+              </Button>
+              <Button
                 isDisabled={isDisabledCreateAztecWallet}
-                onClick={handleCreateWallet}
+                onClick={() => setAddAccount(true)}
                 title="Add account"
               >
                 <AddIcon />
               </Button>
             </Flex>
             {selectedAccount && (
-              <>
-                <Heading size="sm">Account Details</Heading>
-                <Code p={4} borderRadius={6}>
-                  {selectedAccount.toString()}
-                </Code>
-              </>
+              <Tabs>
+                <TabList>
+                  <Tab>Public Tokens</Tab>
+                  <Tab>Private Tokens</Tab>
+                </TabList>
+                <TabPanels>
+                  <TabPanel>Public tokens list</TabPanel>
+                  <TabPanel>Private tokens list</TabPanel>
+                </TabPanels>
+              </Tabs>
             )}
           </CardBody>
         </Card>
-        <Card maxWidth={'calc(100vw - 16px)'} width={'600px'}>
-          <CardBody rowGap={'16px'} display="flex" flexDirection="column">
-            <EVMSigner onSecretGenerated={handleSecretGenerated} />
-          </CardBody>
-        </Card>
       </VStack>
+      {/* Add account */}
+      <Modal isCentered isOpen={addAccount} onClose={() => setAddAccount(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalBody p={8} rowGap={4} display="flex" flexDirection="column">
+            {!isDisabledCreateAztecWallet ? (
+              <VStack
+                align={'flex-start'}
+                divider={<StackDivider borderColor="gray.200" />}
+                spacing={4}
+              >
+                <EVMSigner onSecretGenerated={handleSecretGenerated} />
+                <Button
+                  colorScheme="teal"
+                  isDisabled={isDisabledCreateAztecWallet}
+                  onClick={handleCreateWallet}
+                  width="100%"
+                >
+                  Add account
+                </Button>
+              </VStack>
+            ) : (
+              <Center flexDirection="column" rowGap={4}>
+                <Spinner label="Loading PXE Assets..." />
+                <Text fontSize="md">
+                  {secret === null
+                    ? `Using random secret for Aztec account generation...`
+                    : `Using unique secret based on connected account...`}
+                </Text>
+              </Center>
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      {/* Account details */}
+      <Modal
+        isCentered
+        isOpen={viewDetails}
+        onClose={() => {
+          setViewDetails(false)
+        }}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalBody p={8} rowGap={4} display="flex" flexDirection="column">
+            {selectedAccount && (
+              <>
+                <Heading size="sm">Account Complete Details</Heading>
+                <Code p={4} borderRadius={6} maxWidth="100%" whiteSpace="break-spaces">
+                  {selectedAccount.toReadableString()}
+                </Code>
+              </>
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   )
 }

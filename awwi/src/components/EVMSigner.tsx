@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import { Address, WalletClient } from 'viem'
 import { connectWallet } from '../utils/evmAccount'
-import { Button, Heading, Input, Text } from '@chakra-ui/react'
+import { Button, Heading, Input, Text, VStack } from '@chakra-ui/react'
 
 type Error = 'ERROR_METAMASK' | 'ERROR_SIGNING'
 
@@ -60,14 +60,23 @@ export const EVMSigner: React.FC<Props> = ({ onSecretGenerated }) => {
   }, [evmWalletClient, evmAccount, messageToSign, onSecretGenerated])
 
   return (
-    <>
+    <VStack align={'flex-start'} spacing={4}>
       {!evmWalletClient && (
         <>
+          <Heading size="xs" as="h3">
+            Tip: connect to MetaMask
+          </Heading>
           <Text fontSize="sm">
-            Connecting to MetaMask is optional but allows you to sign messages for making a
-            deterministic schnorr account based on your signed message.
+            Connecting is optional but it allows you to sign messages and creating a deterministic
+            Schnorr account based on your signed message.
           </Text>
-          <Button colorScheme="teal" isDisabled={isDisabledConnect} onClick={handleConnect}>
+          <Button
+            colorScheme="teal"
+            isDisabled={isDisabledConnect}
+            onClick={handleConnect}
+            variant="outline"
+            width="100%"
+          >
             {isLoadingConnect ? 'Connecting...' : 'Connect MetaMask'}
           </Button>
         </>
@@ -88,7 +97,12 @@ export const EVMSigner: React.FC<Props> = ({ onSecretGenerated }) => {
             type="text"
             value={messageToSign}
           />
-          <Button colorScheme="teal" isDisabled={isDisabledSignMessage} onClick={handleSignMessage}>
+          <Button
+            colorScheme="teal"
+            isDisabled={isDisabledSignMessage}
+            onClick={handleSignMessage}
+            width="100%"
+          >
             {isLoadingSignMessage ? 'Signing...' : 'Sign Message'}
           </Button>
         </>
@@ -100,6 +114,6 @@ export const EVMSigner: React.FC<Props> = ({ onSecretGenerated }) => {
             : 'Error signing message. Please try again.'}
         </Text>
       )}
-    </>
+    </VStack>
   )
 }
