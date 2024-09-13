@@ -41,6 +41,9 @@ export const WalletPage: React.FC = () => {
   const [selectedAccount, setSelectedAccount] = useState<CompleteAddress | undefined>(undefined)
   const [viewDetails, setViewDetails] = useState(false)
   const [addAccount, setAddAccount] = useState(false)
+  const [selectedToken, setSelectedToken] = useState<
+    { symbol: string; value: string; balance: string } | undefined
+  >(undefined)
 
   // useSuspenseQuery
   const { data: pxe, isLoading: isLoadingSandbox } = useQuery({
@@ -135,6 +138,37 @@ export const WalletPage: React.FC = () => {
     },
   ]
 
+  const txs = [
+    {
+      action: 'Sent',
+      address: '0xa7cBf4b2e7e4f2c7d3f3f4b2e7e4f2c7d3f3f4b2',
+      amount: '156.35',
+      date: '2w ago',
+      status: 'Completed',
+    },
+    {
+      action: 'Received',
+      address: '0x89cBf4b2e7e4f2c7d3f3f4b2e7e4f2c7d3f3f4b2',
+      amount: '1000.23',
+      date: '1m ago',
+      status: 'Error',
+    },
+    {
+      action: 'Sent',
+      address: '0x7acdf4b2e7e4f2c7d3f3f4b2e7e4f2c7d387834',
+      amount: '8855.58',
+      date: '1y ago',
+      status: 'Completed',
+    },
+    {
+      action: 'Received',
+      address: '0x76897f4b2e7e4f2c7d3f3f4b2e7e4f2c7d3f3f4b',
+      amount: '1.201',
+      date: '1d ago',
+      status: 'Completed',
+    },
+  ]
+
   return (
     <>
       <VStack spacing={4} align={'flex-start'}>
@@ -179,6 +213,7 @@ export const WalletPage: React.FC = () => {
                         borderBottomWidth="1px"
                         columnGap={2}
                         cursor="pointer"
+                        onClick={() => setSelectedToken(token)}
                         p={2}
                       >
                         <Avatar size="sm" name={token.symbol} />
@@ -200,6 +235,7 @@ export const WalletPage: React.FC = () => {
                         borderBottomWidth="1px"
                         columnGap={2}
                         cursor="pointer"
+                        onClick={() => setSelectedToken(token)}
                         p={2}
                       >
                         <Avatar size="sm" name={token.symbol} />
@@ -270,6 +306,73 @@ export const WalletPage: React.FC = () => {
                 <Code p={4} borderRadius={6} maxWidth="100%" whiteSpace="break-spaces">
                   {selectedAccount.toReadableString()}
                 </Code>
+              </>
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      {/* Token details */}
+      <Modal
+        isCentered
+        isOpen={selectedToken !== undefined}
+        onClose={() => {
+          setSelectedToken(undefined)
+        }}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalBody p={4} rowGap={4} display="flex" flexDirection="column">
+            {selectedToken !== undefined && (
+              <>
+                <Flex
+                  alignItems="center"
+                  borderBottomColor="#ccc"
+                  borderBottomWidth="1px"
+                  flexDirection="column"
+                  columnGap={2}
+                  cursor="pointer"
+                  p={2}
+                >
+                  <Text fontSize="18px">{selectedToken?.symbol}</Text>
+                  <Text fontSize="42px" fontWeight="500">
+                    {selectedToken.balance}
+                  </Text>
+                  <Text fontSize="18px">${selectedToken.value}</Text>
+                </Flex>
+                <Heading size="xs" as="h3" mb={1}>
+                  Transactions
+                </Heading>
+                <VStack
+                  align={'flex-start'}
+                  maxHeight="300px"
+                  overflowX="hidden"
+                  overflowY="auto"
+                  spacing={2}
+                >
+                  {txs.map((tx) => (
+                    <Flex
+                      backgroundColor="rgba(0,0,0,0.05)"
+                      flexDirection="column"
+                      p={3}
+                      rowGap={1}
+                      width="100%"
+                      borderRadius={4}
+                    >
+                      <Flex alignItems="center" justifyContent="space-between">
+                        <Text fontSize="13px" fontWeight="500">
+                          {tx.status}
+                        </Text>
+                        <Text fontSize="13px">{tx.date}</Text>
+                      </Flex>
+                      <Text fontSize="16px" fontWeight="500">
+                        {tx.action} {tx.amount} {selectedToken.symbol}
+                      </Text>
+                      <Text fontSize="12px">
+                        <b>Address:</b> {tx.address}
+                      </Text>
+                    </Flex>
+                  ))}
+                </VStack>
               </>
             )}
           </ModalBody>
