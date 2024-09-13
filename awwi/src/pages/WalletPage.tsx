@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query'
 import { AztecAccountsList } from '../components/AztecAccountsList'
 import { EVMSigner } from '../components/EVMSigner'
 import {
+  Avatar,
   Button,
   Card,
   CardBody,
@@ -22,14 +23,14 @@ import {
   ModalContent,
   ModalOverlay,
   Spinner,
-  Text,
   StackDivider,
-  VStack,
-  Tabs,
-  TabList,
-  TabPanels,
   Tab,
+  TabList,
   TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+  VStack,
 } from '@chakra-ui/react'
 import { AddIcon, ViewIcon } from '@chakra-ui/icons'
 
@@ -103,6 +104,37 @@ export const WalletPage: React.FC = () => {
     return <LoadingSandbox />
   }
 
+  const privateTokens = [
+    {
+      balance: '51.01',
+      symbol: 'USDC',
+      value: '50.97',
+    },
+    {
+      balance: '1000.23',
+      symbol: 'DAI',
+      value: '999.96',
+    },
+    {
+      balance: '100.00',
+      symbol: 'USDT',
+      value: '99.98',
+    },
+  ]
+
+  const publicTokens = [
+    {
+      balance: '1.201',
+      symbol: 'MATIC',
+      value: '0.62',
+    },
+    {
+      balance: '1.0306',
+      symbol: 'WETH',
+      value: '2360.34',
+    },
+  ]
+
   return (
     <>
       <VStack spacing={4} align={'flex-start'}>
@@ -139,8 +171,48 @@ export const WalletPage: React.FC = () => {
                   <Tab>Private Tokens</Tab>
                 </TabList>
                 <TabPanels>
-                  <TabPanel>Public tokens list</TabPanel>
-                  <TabPanel>Private tokens list</TabPanel>
+                  <TabPanel p={0}>
+                    {publicTokens.map((token) => (
+                      <Flex
+                        alignItems="center"
+                        borderBottomColor="#ccc"
+                        borderBottomWidth="1px"
+                        columnGap={2}
+                        cursor="pointer"
+                        p={2}
+                      >
+                        <Avatar size="sm" name={token.symbol} />
+                        <Text fontSize="18px" fontWeight="500">
+                          {token.symbol}
+                        </Text>
+                        <Flex direction="column" align="flex-end" marginLeft="auto">
+                          <Text fontSize="16px">{token.balance}</Text>
+                          <Text fontSize="13px">${token.value}</Text>
+                        </Flex>
+                      </Flex>
+                    ))}
+                  </TabPanel>
+                  <TabPanel p={0}>
+                    {privateTokens.map((token) => (
+                      <Flex
+                        alignItems="center"
+                        borderBottomColor="#ccc"
+                        borderBottomWidth="1px"
+                        columnGap={2}
+                        cursor="pointer"
+                        p={2}
+                      >
+                        <Avatar size="sm" name={token.symbol} />
+                        <Text fontSize="18px" fontWeight="500">
+                          {token.symbol}
+                        </Text>
+                        <Flex direction="column" align="flex-end" marginLeft="auto">
+                          <Text fontSize="16px">{token.balance}</Text>
+                          <Text fontSize="13px">${token.value}</Text>
+                        </Flex>
+                      </Flex>
+                    ))}
+                  </TabPanel>
                 </TabPanels>
               </Tabs>
             )}
