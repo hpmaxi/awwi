@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import { Address, WalletClient } from 'viem'
 import { connectWallet } from '../utils/evmAccount'
-import { Button, Heading, Input, Text, VStack } from '@chakra-ui/react'
+import { Button, Heading, Input, Text, VStack, Code } from '@chakra-ui/react'
 
 type Error = 'ERROR_METAMASK' | 'ERROR_SIGNING'
 
@@ -87,8 +87,11 @@ export const EVMSigner: React.FC<Props> = ({ onSecretGenerated }) => {
       {evmWalletClient && (
         <>
           <Heading size="xs" as="h3">
-            Connected to {evmAccount}
+            Connected to
           </Heading>
+          <Code pl={3} pr={3} pt={2} pb={2} borderRadius={6} width="100%" whiteSpace="break-spaces">
+            {evmAccount}
+          </Code>
           {alreadySigned ? (
             <Text fontSize="sm">
               Message signed!{' '}
