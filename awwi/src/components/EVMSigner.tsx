@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import { Address, WalletClient } from 'viem'
 import { connectWallet } from '../utils/evmAccount'
-import { Button, Heading, Input, Text } from '@chakra-ui/react'
+import { Button, Heading, Input, Text, VStack, Code } from '@chakra-ui/react'
 
 type Error = 'ERROR_METAMASK' | 'ERROR_SIGNING'
 
@@ -15,6 +15,7 @@ export const EVMSigner: React.FC<Props> = ({ onSecretGenerated }) => {
   const [error, setError] = useState<Error | null>(null)
   const [isLoadingConnect, setIsLoadingConnect] = useState(false)
   const [isLoadingSignMessage, setIsLoadingSignMessage] = useState(false)
+  const [alreadySigned, setAlreadySigned] = useState(false)
   const [messageToSign, setMessageToSign] = useState('')
 
   const isDisabledSignMessage =
@@ -41,6 +42,7 @@ export const EVMSigner: React.FC<Props> = ({ onSecretGenerated }) => {
 
   const handleSignMessage = useCallback(async () => {
     if (!evmWalletClient || !evmAccount || !messageToSign.trim()) return
+
     setIsLoadingSignMessage(true)
     setError(null)
 
@@ -56,18 +58,28 @@ export const EVMSigner: React.FC<Props> = ({ onSecretGenerated }) => {
       setError('ERROR_SIGNING')
     } finally {
       setIsLoadingSignMessage(false)
+      setAlreadySigned(true)
     }
   }, [evmWalletClient, evmAccount, messageToSign, onSecretGenerated])
 
   return (
-    <>
+    <VStack align={'flex-start'} spacing={4}>
       {!evmWalletClient && (
         <>
+          <Heading size="xs" as="h3">
+            Tip: connect to MetaMask
+          </Heading>
           <Text fontSize="sm">
-            Connecting to MetaMask is optional but allows you to sign messages for making a
-            deterministic schnorr account based on your signed message.
+            Connecting is optional but it allows you to sign messages and creating a deterministic
+            Schnorr account based on your signed message.
           </Text>
-          <Button colorScheme="teal" isDisabled={isDisabledConnect} onClick={handleConnect}>
+          <Button
+            colorScheme="teal"
+            isDisabled={isDisabledConnect}
+            onClick={handleConnect}
+            variant="outline"
+            width="100%"
+          >
             {isLoadingConnect ? 'Connecting...' : 'Connect MetaMask'}
           </Button>
         </>
@@ -75,22 +87,49 @@ export const EVMSigner: React.FC<Props> = ({ onSecretGenerated }) => {
       {evmWalletClient && (
         <>
           <Heading size="xs" as="h3">
-            Connected to account {evmAccount}
+            Connected to
           </Heading>
-          <Text fontSize="sm">
-            Enter a message to sign. Signing different messages produces unique secrets for
-            differents accounts.
-          </Text>
-          <Input
-            isDisabled={!evmAccount || !evmWalletClient}
-            onChange={(e) => setMessageToSign(e.target.value)}
-            placeholder="Enter message to sign"
-            type="text"
-            value={messageToSign}
-          />
-          <Button colorScheme="teal" isDisabled={isDisabledSignMessage} onClick={handleSignMessage}>
-            {isLoadingSignMessage ? 'Signing...' : 'Sign Message'}
-          </Button>
+          <Code pl={3} pr={3} pt={2} pb={2} borderRadius={6} width="100%" whiteSpace="break-spaces">
+            {evmAccount}
+          </Code>
+          {alreadySigned ? (
+            <Text fontSize="sm">
+              Message signed!{' '}
+              <Button
+                variant="link"
+                colorScheme="teal"
+                onClick={() => {
+                  setAlreadySigned(false)
+                  setMessageToSign('')
+                }}
+              >
+                Sign again?
+              </Button>
+            </Text>
+          ) : (
+            <>
+              <Text fontSize="sm">
+                Enter a message to sign. Signing different messages produces unique secrets for
+                differents accounts.
+              </Text>
+              <Input
+                isDisabled={!evmAccount || !evmWalletClient}
+                onChange={(e) => setMessageToSign(e.target.value)}
+                placeholder="Enter message to sign"
+                type="text"
+                value={messageToSign}
+              />
+              <Button
+                colorScheme="teal"
+                isDisabled={isDisabledSignMessage}
+                onClick={handleSignMessage}
+                variant="outline"
+                width="100%"
+              >
+                {isLoadingSignMessage ? 'Signing...' : 'Sign Message'}
+              </Button>
+            </>
+          )}
         </>
       )}
       {error && (
@@ -100,6 +139,6 @@ export const EVMSigner: React.FC<Props> = ({ onSecretGenerated }) => {
             : 'Error signing message. Please try again.'}
         </Text>
       )}
-    </>
+    </VStack>
   )
 }
